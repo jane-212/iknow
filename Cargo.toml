@@ -1,0 +1,9 @@
+[package]
+name = "iknow"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Jane <jjt1525@outlook.com>" ]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
