@@ -1,6 +1,6 @@
 FROM rust:latest as builder
 WORKDIR /app
-COPY src/ .
+COPY src/ ./src
 COPY Cargo.toml .
 RUN cargo build --release
 
