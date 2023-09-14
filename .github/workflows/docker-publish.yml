@@ -11,7 +11,7 @@ jobs:
     steps:
       -
 	name: Cargo test
-	run: cargo test
+	runs: cargo test
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
