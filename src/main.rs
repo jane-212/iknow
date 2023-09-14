@@ -8,6 +8,11 @@ use dotenv::dotenv;
 use env_logger::Builder;
 use log::Level;
 use shadow_rs::shadow;
+use term_table::{
+    row::Row,
+    table_cell::{Alignment, TableCell},
+    Table, TableStyle,
+};
 use tokio::signal::unix::{signal, SignalKind};
 
 use iknow::csgo::Csgo;
@@ -87,72 +92,44 @@ async fn entry() -> Result<()> {
 shadow!(build);
 
 fn show_banner() {
-    macro_rules! new_line {
-        ($banner: expr) => {
-            $banner.push('\n')
-        };
-        ($banner: expr, $line: expr) => {
-            $banner.push('\n');
-            $banner.push_str($line)
-        };
-    }
-
     let logo = include_str!("../iknow.banner");
-    let mut banner = String::new();
+    let mut table = Table::new();
+    table.style = TableStyle::blank();
 
-    new_line!(banner);
-    new_line!(banner, &format!("{}", logo.yellow().bold()));
-    new_line!(banner);
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "name:".blue().bold(),
-            build::PROJECT_NAME.yellow().bold()
-        )
-    );
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "version:".blue().bold(),
-            build::PKG_VERSION.yellow().bold()
-        )
-    );
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "description:".blue().bold(),
-            build::PKG_DESCRIPTION.yellow().bold()
-        )
-    );
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "production:".blue().bold(),
-            build::BUILD_RUST_CHANNEL.yellow().bold()
-        )
-    );
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "target_os:".blue().bold(),
-            build::BUILD_OS.yellow().bold()
-        )
-    );
-    new_line!(
-        banner,
-        &format!(
-            "{} {}",
-            "build_env:".blue().bold(),
-            build::BUILD_TARGET.yellow().bold()
-        )
-    );
-    new_line!(banner);
-    info!("{}", banner);
+    table.add_row(Row::new(vec![TableCell::new_with_alignment(
+        logo.yellow().bold(),
+        2,
+        Alignment::Center,
+    )]));
+    let tag_align = Alignment::Right;
+    let content_align = Alignment::Left;
+
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("name".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::PROJECT_NAME.yellow().bold(), 1, content_align),
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("version".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::PKG_VERSION.yellow().bold(), 1, content_align),
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("description".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::PKG_DESCRIPTION.yellow().bold(), 1, content_align),
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("production".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::BUILD_RUST_CHANNEL.yellow().bold(), 1, content_align),
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("target_os".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::BUILD_OS.yellow().bold(), 1, content_align),
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("build_env".blue().bold(), 1, tag_align),
+        TableCell::new_with_alignment(build::BUILD_TARGET.yellow().bold(), 1, content_align),
+    ]));
+
+    info!("\n\n{}", table.render());
 }
 
 async fn run(
@@ -165,13 +142,12 @@ async fn run(
     let csgo = Csgo::new(username, password, from, reply_to, to).context("init csgo failed")?;
     #[cfg(debug_assertions)]
     let manager = Manager::new()
-        .add("*/10 * * * * *", Box::new(csgo))
+        .add("*/10 * * * * *", "csgo", Box::new(csgo))
         .context("add cron job failed")?;
     #[cfg(not(debug_assertions))]
     let manager = Manager::new()
-        .add("0 0 1 * * *", Box::new(csgo))
+        .add("0 0 1 * * *", "csgo", Box::new(csgo))
         .context("add cron job failed")?;
-    info!("add cron job `{}`", "csgo".green().bold());
     tokio::spawn(async move {
         manager.start().await;
     });
