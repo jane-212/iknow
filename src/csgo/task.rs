@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use chrono::{Days, Local, NaiveDate};
+use colored::Colorize;
 
 use crate::csgo::api::{CsgoApi, Match};
 use crate::utils::{Mail, Task};
@@ -30,7 +31,7 @@ impl Csgo {
 #[async_trait]
 impl Task for Csgo {
     async fn run(&mut self) -> Result<()> {
-        info!("run task csgo");
+        info!("run task `{}`", "csgo".green().bold());
 
         let today = Local::now().date_naive();
         let days = vec![
@@ -52,7 +53,7 @@ impl Task for Csgo {
             );
         }
         let matches = matches.into_iter().flatten().collect::<Vec<Match>>();
-        info!("get all matches");
+        info!("get all matches {}", "successfully".green().bold());
 
         let mut context = tera::Context::new();
         context.insert("matches", &matches);
@@ -62,7 +63,7 @@ impl Task for Csgo {
         self.mail
             .send("csgo matches near 3 days", content)
             .context("send csgo mail failed")?;
-        info!("send mail");
+        info!("send mail {}", "successfully".green().bold());
 
         Ok(())
     }

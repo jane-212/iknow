@@ -3,8 +3,10 @@ use std::io::Write;
 
 use anyhow::{Context, Result};
 use chrono::Local;
+use colored::Colorize;
 use dotenv::dotenv;
-use env_logger::{fmt::Color, Builder};
+use env_logger::Builder;
+use log::Level;
 use shadow_rs::shadow;
 use tokio::signal::unix::{signal, SignalKind};
 
@@ -19,23 +21,22 @@ async fn main() {
     dotenv().ok();
     Builder::from_default_env()
         .format(|buf, record| {
-            let mut style = buf.style();
-            let level = record.level();
+            let level = record.level().to_string();
 
-            let style = match level {
-                log::Level::Error => style.set_color(Color::Red),
-                log::Level::Warn => style.set_color(Color::Yellow),
-                log::Level::Info => style.set_color(Color::Green),
-                log::Level::Debug => style.set_color(Color::Magenta),
-                log::Level::Trace => style.set_color(Color::Blue),
-            };
-            style.set_bold(true);
+            let level = match record.level() {
+                Level::Error => level.red(),
+                Level::Warn => level.yellow(),
+                Level::Info => level.green(),
+                Level::Debug => level.purple(),
+                Level::Trace => level.blue(),
+            }
+            .bold();
 
             writeln!(
                 buf,
                 "[{} {}] {}",
                 Local::now().format("%Y-%m-%d %H:%M:%S"),
-                style.value(level),
+                level,
                 record.args(),
             )
         })
@@ -55,8 +56,6 @@ async fn entry() -> Result<()> {
     let mail_reply_to = env::var("MAIL_REPLY_TO").context("MAIL_REPLY_TO missing")?;
     let mail_to = env::var("MAIL_TO").context("MAIL_TO missing")?;
 
-    info!("load environment variables");
-
     run(
         mail_username,
         mail_password,
@@ -67,20 +66,20 @@ async fn entry() -> Result<()> {
     .await
     .context("run app failed")?;
 
-    info!("app start");
+    info!("app {}", "start".green().bold());
 
     let mut sigint = signal(SignalKind::interrupt()).context("create signal interrupt failed")?;
     let mut sigterm = signal(SignalKind::terminate()).context("create signal terminate failed")?;
     tokio::select! {
         _ = sigint.recv() => {
-            info!("receive signal interrupt");
+            info!("receive signal {}", "interrupt".yellow().bold());
         }
         _ = sigterm.recv() => {
-            info!("receive signal terminate");
+            info!("receive signal {}", "terminate".yellow().bold());
         }
     }
 
-    info!("app quit");
+    info!("app {}", "quit".red().bold());
 
     Ok(())
 }
@@ -88,17 +87,72 @@ async fn entry() -> Result<()> {
 shadow!(build);
 
 fn show_banner() {
-    let banner = include_str!("../iknow.banner");
-    info!(
-        "\n\n{}\n\nname: {}\nversion: {}\ndescription: {}\nproduction: {}\ntarget_os: {}\nbuild_env: {}\n",
+    macro_rules! new_line {
+        ($banner: expr) => {
+            $banner.push('\n')
+        };
+        ($banner: expr, $line: expr) => {
+            $banner.push('\n');
+            $banner.push_str($line)
+        };
+    }
+
+    let logo = include_str!("../iknow.banner");
+    let mut banner = String::new();
+
+    new_line!(banner);
+    new_line!(banner, &format!("{}", logo.yellow().bold()));
+    new_line!(banner);
+    new_line!(
         banner,
-        build::PROJECT_NAME,
-        build::PKG_VERSION,
-        build::PKG_DESCRIPTION,
-        build::BUILD_RUST_CHANNEL,
-        build::BUILD_OS,
-        build::BUILD_TARGET
+        &format!(
+            "{} {}",
+            "name:".blue().bold(),
+            build::PROJECT_NAME.yellow().bold()
+        )
     );
+    new_line!(
+        banner,
+        &format!(
+            "{} {}",
+            "version:".blue().bold(),
+            build::PKG_VERSION.yellow().bold()
+        )
+    );
+    new_line!(
+        banner,
+        &format!(
+            "{} {}",
+            "description:".blue().bold(),
+            build::PKG_DESCRIPTION.yellow().bold()
+        )
+    );
+    new_line!(
+        banner,
+        &format!(
+            "{} {}",
+            "production:".blue().bold(),
+            build::BUILD_RUST_CHANNEL.yellow().bold()
+        )
+    );
+    new_line!(
+        banner,
+        &format!(
+            "{} {}",
+            "target_os:".blue().bold(),
+            build::BUILD_OS.yellow().bold()
+        )
+    );
+    new_line!(
+        banner,
+        &format!(
+            "{} {}",
+            "build_env:".blue().bold(),
+            build::BUILD_TARGET.yellow().bold()
+        )
+    );
+    new_line!(banner);
+    info!("{}", banner);
 }
 
 async fn run(
@@ -117,7 +171,7 @@ async fn run(
     let manager = Manager::new()
         .add("0 0 1 * * *", Box::new(csgo))
         .context("add cron job failed")?;
-    info!("add cron job csgo");
+    info!("add cron job `{}`", "csgo".green().bold());
     tokio::spawn(async move {
         manager.start().await;
     });
