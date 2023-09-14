@@ -116,7 +116,7 @@ async fn run(
         .context("add cron job failed")?;
     #[cfg(not(debug_assertions))]
     let manager = Manager::new()
-        .add("0 */1 * * * *", Box::new(csgo))
+        .add("0 0 1 * * *", Box::new(csgo))
         .context("add cron job failed")?;
     info!("add cron job csgo");
     tokio::spawn(async move {
