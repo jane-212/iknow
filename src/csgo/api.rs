@@ -34,7 +34,7 @@ impl CsgoApi {
             .ok_or(anyhow!("error default time"))
             .context("set zero time failed")?;
         let time_format = "%Y-%m-%d+%H:%M:%S".to_string();
-        let teams = vec![6667];
+        let teams = vec![6667, 5995, 12396, 4608, 5378, 8840, 5752];
 
         Ok(Self {
             client,
