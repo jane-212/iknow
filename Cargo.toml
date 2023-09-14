@@ -3,6 +3,7 @@ name = "iknow"
 version = "0.1.1"
 edition = "2021"
 authors = [ "Jane <jjt1525@outlook.com>" ]
+description = "A app to notify you about changes"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

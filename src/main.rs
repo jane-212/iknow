@@ -90,14 +90,15 @@ shadow!(build);
 fn show_banner() {
     let banner = include_str!("../iknow.banner");
     info!(
-        "\n\n{}\n\nname: {}\nproduction: {}\nauthor: <{} {}>\ntarget os: {}{}\n",
+        "\n\n{}\n\nname: {}\nversion: {}\ndescription: {}\nproduction: {}\ntarget_os: {}\nbuild_time: {}\nbuild_env: {}\n",
         banner,
         build::PROJECT_NAME,
+        build::PKG_VERSION,
+        build::PKG_DESCRIPTION,
         build::BUILD_RUST_CHANNEL,
-        build::COMMIT_AUTHOR,
-        build::COMMIT_EMAIL,
         build::BUILD_OS,
-        build::VERSION
+        build::BUILD_TIME,
+        build::BUILD_TARGET
     );
 }
 
@@ -115,7 +116,7 @@ async fn run(
         .context("add cron job failed")?;
     #[cfg(not(debug_assertions))]
     let manager = Manager::new()
-        .add("0 1 * * * *", Box::new(csgo))
+        .add("0 0 1 * * *", Box::new(csgo))
         .context("add cron job failed")?;
     info!("add cron job csgo");
     tokio::spawn(async move {
