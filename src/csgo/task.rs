@@ -1,7 +1,6 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use chrono::{Days, Local, NaiveDate};
-use tera::Context;
 
 use crate::csgo::api::{CsgoApi, Match};
 use crate::utils::{Mail, Task};
@@ -21,8 +20,8 @@ impl Csgo {
         reply_to: impl Into<String>,
         to: impl Into<String>,
     ) -> Result<Csgo> {
-        let api = CsgoApi::new()?;
-        let mail = Mail::new(username, password, from, reply_to, to)?;
+        let api = CsgoApi::new().context("init csgo api failed")?;
+        let mail = Mail::new(username, password, from, reply_to, to).context("init mail failed")?;
 
         Ok(Self { api, mail })
     }
@@ -31,6 +30,8 @@ impl Csgo {
 #[async_trait]
 impl Task for Csgo {
     async fn run(&mut self) -> Result<()> {
+        info!("run task csgo");
+
         let today = Local::now().date_naive();
         let days = vec![
             Some(today),
@@ -43,15 +44,25 @@ impl Task for Csgo {
 
         let mut matches = Vec::new();
         for day in days {
-            matches.push(self.api.get_matches_by_date(&day).await?);
+            matches.push(
+                self.api
+                    .get_matches_by_date(&day)
+                    .await
+                    .with_context(|| format!("get matches of `{}` failed", &day))?,
+            );
         }
-
         let matches = matches.into_iter().flatten().collect::<Vec<Match>>();
+        info!("get all matches");
 
-        let mut context = Context::new();
+        let mut context = tera::Context::new();
         context.insert("matches", &matches);
-        let content = TEMPLATES.render("csgo.html", &context)?;
-        self.mail.send("csgo matches near 3 days", content)?;
+        let content = TEMPLATES
+            .render("csgo.html", &context)
+            .context("render template `csgo.html` failed")?;
+        self.mail
+            .send("csgo matches near 3 days", content)
+            .context("send csgo mail failed")?;
+        info!("send mail");
 
         Ok(())
     }

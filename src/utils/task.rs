@@ -1,10 +1,13 @@
 use std::str::FromStr;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use cron::Schedule;
 use tokio::time::{self, Duration};
+
+const POLL_INTERVAL: u64 = 1;
+const POLL_MAX_SIZE: usize = 5;
 
 #[async_trait]
 pub trait Task: Send + Sync {
@@ -19,7 +22,7 @@ struct Cron<'a> {
 
 impl<'a> Cron<'a> {
     fn new(task: Box<dyn Task + 'a>, schedule: Schedule) -> Cron<'a> {
-        let upcomings = schedule.upcoming(Local).take(5).collect();
+        let upcomings = schedule.upcoming(Local).take(POLL_MAX_SIZE).collect();
         Self {
             task,
             schedule,
@@ -39,7 +42,9 @@ impl<'a> Manager<'a> {
     }
 
     pub fn add(mut self, cron: impl AsRef<str>, task: Box<dyn Task + 'a>) -> Result<Manager<'a>> {
-        let sched = Schedule::from_str(cron.as_ref())?;
+        let cron = cron.as_ref();
+        let sched = Schedule::from_str(cron)
+            .with_context(|| format!("parse schedule from str `{}` failed", cron))?;
         self.crons.push(Cron::new(task, sched));
 
         Ok(self)
@@ -58,12 +63,12 @@ impl<'a> Manager<'a> {
                         cron.upcomings.push(upcoming);
                     }
                     if let Err(e) = cron.task.run().await {
-                        error!("{}", e);
+                        error!("{:?}", e);
                     }
                 }
             }
 
-            time::sleep(Duration::from_secs(3)).await;
+            time::sleep(Duration::from_secs(POLL_INTERVAL)).await;
         }
     }
 }

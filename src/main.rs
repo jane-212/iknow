@@ -1,10 +1,11 @@
 use std::env;
 use std::io::Write;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use chrono::Local;
 use dotenv::dotenv;
 use env_logger::{fmt::Color, Builder};
+use shadow_rs::shadow;
 use tokio::signal::unix::{signal, SignalKind};
 
 use iknow::csgo::Csgo;
@@ -14,7 +15,7 @@ use iknow::utils::Manager;
 extern crate log;
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() {
     dotenv().ok();
     Builder::from_default_env()
         .format(|buf, record| {
@@ -40,11 +41,21 @@ async fn main() -> Result<()> {
         })
         .init();
 
-    let mail_username = env::var("MAIL_USERNAME")?;
-    let mail_password = env::var("MAIL_PASSWORD")?;
-    let mail_from = env::var("MAIL_FROM")?;
-    let mail_reply_to = env::var("MAIL_REPLY_TO")?;
-    let mail_to = env::var("MAIL_TO")?;
+    if let Err(e) = entry().await {
+        error!("{:?}", e);
+    }
+}
+
+async fn entry() -> Result<()> {
+    show_banner();
+
+    let mail_username = env::var("MAIL_USERNAME").context("MAIL_USERNAME missing")?;
+    let mail_password = env::var("MAIL_PASSWORD").context("MAIL_PASSWORD missing")?;
+    let mail_from = env::var("MAIL_FROM").context("MAIL_FROM missing")?;
+    let mail_reply_to = env::var("MAIL_REPLY_TO").context("MAIL_REPLY_TO missing")?;
+    let mail_to = env::var("MAIL_TO").context("MAIL_TO missing")?;
+
+    info!("load environment variables");
 
     run(
         mail_username,
@@ -53,12 +64,13 @@ async fn main() -> Result<()> {
         mail_reply_to,
         mail_to,
     )
-    .await?;
+    .await
+    .context("run app failed")?;
 
     info!("app start");
 
-    let mut sigint = signal(SignalKind::interrupt())?;
-    let mut sigterm = signal(SignalKind::terminate())?;
+    let mut sigint = signal(SignalKind::interrupt()).context("create signal interrupt failed")?;
+    let mut sigterm = signal(SignalKind::terminate()).context("create signal terminate failed")?;
     tokio::select! {
         _ = sigint.recv() => {
             info!("receive signal interrupt");
@@ -73,6 +85,22 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
+shadow!(build);
+
+fn show_banner() {
+    let banner = include_str!("../iknow.banner");
+    info!(
+        "\n\n{}\n\nname: {}\nproduction: {}\nauthor: <{} {}>\ntarget os: {}{}\n",
+        banner,
+        build::PROJECT_NAME,
+        build::BUILD_RUST_CHANNEL,
+        build::COMMIT_AUTHOR,
+        build::COMMIT_EMAIL,
+        build::BUILD_OS,
+        build::VERSION
+    );
+}
+
 async fn run(
     username: impl Into<String>,
     password: impl Into<String>,
@@ -80,11 +108,16 @@ async fn run(
     reply_to: impl Into<String>,
     to: impl Into<String>,
 ) -> Result<()> {
-    let csgo = Csgo::new(username, password, from, reply_to, to)?;
+    let csgo = Csgo::new(username, password, from, reply_to, to).context("init csgo failed")?;
     #[cfg(debug_assertions)]
-    let manager = Manager::new().add("*/10 * * * * *", Box::new(csgo))?;
+    let manager = Manager::new()
+        .add("*/10 * * * * *", Box::new(csgo))
+        .context("add cron job failed")?;
     #[cfg(not(debug_assertions))]
-    let manager = Manager::new().add("0 1 * * * *", Box::new(csgo))?;
+    let manager = Manager::new()
+        .add("0 1 * * * *", Box::new(csgo))
+        .context("add cron job failed")?;
+    info!("add cron job csgo");
     tokio::spawn(async move {
         manager.start().await;
     });

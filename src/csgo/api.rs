@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use chrono::{NaiveDate, NaiveTime};
 use reqwest::{
     header::{self, HeaderMap, HeaderValue},
@@ -26,8 +26,13 @@ impl CsgoApi {
             HeaderValue::from_static("PostmanRuntime/7.32.3"),
         );
         headers.insert(header::HOST, HeaderValue::from_static("localhost"));
-        let client = Client::builder().default_headers(headers).build()?;
-        let time = NaiveTime::from_hms_opt(0, 0, 0).ok_or(anyhow!("error default time"))?;
+        let client = Client::builder()
+            .default_headers(headers)
+            .build()
+            .context("build request client failed")?;
+        let time = NaiveTime::from_hms_opt(0, 0, 0)
+            .ok_or(anyhow!("error default time"))
+            .context("set zero time failed")?;
         let time_format = "%Y-%m-%d+%H:%M:%S".to_string();
         let teams = vec![6667];
 
@@ -50,9 +55,11 @@ impl CsgoApi {
             .get(url)
             .header(header::HOST, "gwapi.pwesports.cn")
             .send()
-            .await?
+            .await
+            .context("send request failed")?
             .json::<Response>()
-            .await?
+            .await
+            .context("get response failed")?
             .result
             .match_response
             .dto_list

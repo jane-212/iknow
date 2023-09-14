@@ -1,8 +1,7 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use lettre::{
-    message::header::ContentType,
-    transport::smtp::authentication::Credentials,
-    Message, SmtpTransport, Transport,
+    message::header::ContentType, transport::smtp::authentication::Credentials, Message,
+    SmtpTransport, Transport,
 };
 
 #[derive(Clone)]
@@ -22,7 +21,8 @@ impl Mail {
         to: impl Into<String>,
     ) -> Result<Mail> {
         let creds = Credentials::new(username.into(), password.into());
-        let client = SmtpTransport::relay("smtp.163.com")?
+        let client = SmtpTransport::relay("smtp.163.com")
+            .context("connect smtp server `smtp.163.com` failed")?
             .credentials(creds)
             .build();
 
@@ -35,15 +35,16 @@ impl Mail {
     }
 
     pub fn send(&self, subject: impl AsRef<str>, body: impl Into<String>) -> Result<()> {
+        let subject = subject.as_ref();
         let email = Message::builder()
-            .from(self.from.parse()?)
-            .reply_to(self.reply_to.parse()?)
-            .to(self.to.parse()?)
-            .subject(subject.as_ref())
+            .from(self.from.parse().with_context(|| format!("parse mailbox `{}` failed", self.from))?)
+            .reply_to(self.reply_to.parse().with_context(|| format!("parse mailbox `{}` failed", self.reply_to))?)
+            .to(self.to.parse().with_context(|| format!("parse mailbox `{}` failed", self.to))?)
+            .subject(subject)
             .header(ContentType::TEXT_HTML)
-            .body(body.into())?;
+            .body(body.into()).with_context(|| format!("init email `{}` failed", subject))?;
 
-        self.client.send(&email)?;
+        self.client.send(&email).context("send mail failed")?;
 
         Ok(())
     }
