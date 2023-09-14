@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-	name: Cargo test
-	runs: cargo test
+	name: Checkout
+    	uses: actions/checkout@v3
+      -
+    	name: Run tests
+      	run: cargo test --verbose
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
