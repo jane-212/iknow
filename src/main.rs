@@ -90,14 +90,13 @@ shadow!(build);
 fn show_banner() {
     let banner = include_str!("../iknow.banner");
     info!(
-        "\n\n{}\n\nname: {}\nversion: {}\ndescription: {}\nproduction: {}\ntarget_os: {}\nbuild_time: {}\nbuild_env: {}\n",
+        "\n\n{}\n\nname: {}\nversion: {}\ndescription: {}\nproduction: {}\ntarget_os: {}\nbuild_env: {}\n",
         banner,
         build::PROJECT_NAME,
         build::PKG_VERSION,
         build::PKG_DESCRIPTION,
         build::BUILD_RUST_CHANNEL,
         build::BUILD_OS,
-        build::BUILD_TIME,
         build::BUILD_TARGET
     );
 }
