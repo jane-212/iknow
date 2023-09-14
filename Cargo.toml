@@ -7,3 +7,16 @@ authors = [ "Jane <jjt1525@outlook.com>" ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.75"
+async-trait = "0.1.73"
+chrono = "0.4.30"
+cron = "0.12.0"
+dotenv = "0.15.0"
+env_logger = "0.10.0"
+lazy_static = "1.4.0"
+lettre = "0.10.4"
+log = "0.4.20"
+reqwest = { version = "0.11.20", features = ["json"] }
+serde = { version = "1.0.188", features = ["derive"] }
+tera = "1.19.1"
+tokio = { version = "1.32.0", features = ["full"] }

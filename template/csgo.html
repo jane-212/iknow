@@ -1,0 +1,98 @@
+{% extends "index.html" %}
+
+{% block title %}csgo matches near 3 days{% endblock title %}
+
+{% block style %}
+<style>
+    .container {
+        display: block;
+        margin: auto;
+        width: 60%;
+    }
+
+    @media screen and (max-width: 640px) {
+        .container {
+            width: 100%;
+        }
+    }
+
+    .item {
+        border: 1px solid var(--main-color);
+        border-radius: 5px;
+        margin: 10px;
+        background-color: var(--bg-color);
+    }
+
+    .split {
+        display: inline-flex;
+        width: 32%;
+        margin: auto;
+    }
+
+    .team {
+        display: block;
+        text-align: center;
+        margin: auto;
+    }
+
+    .info {
+        display: block;
+        text-align: center;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .bo,
+    .time,
+    .name,
+    .team-id,
+    .team-logo {
+        display: block;
+    }
+
+    .team-logo {
+        display: block;
+        margin: auto;
+        max-width: 50%;
+    }
+
+    .team-id {
+        color: var(--main-color);
+    }
+
+    .time,
+    .name,
+    .bo {
+        color: var(--fg-color);
+    }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container">
+    {% for match in matches %}
+    <div class="item">
+        <div class="split">
+            <div class="team">
+                <img class="team-logo" src="{{match.team1.logo}}" alt="{{match.team1.name}}">
+                <span class="team-id">{{match.team1.name}}</span>
+            </div>
+        </div>
+        <div class="split">
+            <div class="info">
+                <span class="name">{{match.info.name}}</span>
+                <span class="time">{{match.info.start_time | date(format="%Y-%m-%d %H:%M",
+                    timezone="Asia/Shanghai")}}</span>
+                <span class="bo">{{match.info.bo | upper}}</span>
+            </div>
+        </div>
+        <div class="split">
+            <div class="team">
+                <img class="team-logo" src="{{match.team2.logo}}" alt="{{match.team2.name}}">
+                <span class="team-id">{{match.team2.name}}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock body %}
