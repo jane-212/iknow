@@ -4,6 +4,7 @@ COPY src/ ./src
 COPY Cargo.toml .
 COPY build.rs .
 COPY iknow.banner .
+COPY .git/ ./.git
 RUN cargo build --release
 
 FROM debian
