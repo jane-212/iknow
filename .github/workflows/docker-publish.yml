@@ -13,6 +13,9 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
+        name: Count code
+        run: cargo install tokei && tokei .
+      -
         name: Run tests
         run: cargo test
       -
