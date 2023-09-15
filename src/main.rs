@@ -92,7 +92,7 @@ async fn entry() -> Result<()> {
 shadow!(build);
 
 fn show_banner() {
-    let logo = include_str!("../iknow.banner");
+    let logo = include_str!("../banner");
     let mut table = Table::new();
     table.style = TableStyle::blank();
 

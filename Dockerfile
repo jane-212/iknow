@@ -3,7 +3,7 @@ WORKDIR /app
 COPY src/ ./src
 COPY Cargo.toml .
 COPY build.rs .
-COPY iknow.banner .
+COPY banner .
 RUN cargo build --release
 
 FROM debian
