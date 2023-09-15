@@ -71,8 +71,6 @@ async fn entry() -> Result<()> {
     .await
     .context("run app failed")?;
 
-    info!("app {}", "start".green().bold());
-
     let mut sigint = signal(SignalKind::interrupt()).context("create signal interrupt failed")?;
     let mut sigterm = signal(SignalKind::terminate()).context("create signal terminate failed")?;
     tokio::select! {
@@ -84,7 +82,7 @@ async fn entry() -> Result<()> {
         }
     }
 
-    info!("app {}", "quit".red().bold());
+    info!("{}", "quit...".red().bold());
 
     Ok(())
 }
@@ -94,14 +92,14 @@ shadow!(build);
 fn show_banner() {
     let logo = include_str!("../banner");
     let mut table = Table::new();
-    table.style = TableStyle::blank();
+    table.style = TableStyle::rounded();
 
     table.add_row(Row::new(vec![TableCell::new_with_alignment(
         logo.yellow().bold(),
         2,
         Alignment::Center,
     )]));
-    let tag_align = Alignment::Right;
+    let tag_align = Alignment::Left;
     let content_align = Alignment::Left;
 
     table.add_row(Row::new(vec![
