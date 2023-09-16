@@ -39,7 +39,7 @@ async fn main() {
 
             writeln!(
                 buf,
-                "[{} {}] {}",
+                "{} {}: {}",
                 Local::now().format("%Y-%m-%d %H:%M:%S"),
                 level,
                 record.args(),
