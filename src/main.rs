@@ -92,15 +92,15 @@ shadow!(build);
 fn show_banner() {
     let logo = include_str!("../banner");
     let mut table = Table::new();
-    table.style = TableStyle::rounded();
+    table.style = TableStyle::blank();
 
     table.add_row(Row::new(vec![TableCell::new_with_alignment(
         logo.yellow().bold(),
         2,
         Alignment::Center,
     )]));
-    let tag_align = Alignment::Left;
-    let content_align = Alignment::Left;
+    let tag_align = Alignment::Center;
+    let content_align = Alignment::Center;
 
     table.add_row(Row::new(vec![
         TableCell::new_with_alignment("name".blue().bold(), 1, tag_align),
