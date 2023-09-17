@@ -78,9 +78,11 @@ impl<'a> Manager<'a> {
         let tag_align = Alignment::Left;
         let content_align = Alignment::Left;
 
-        table.add_row(Row::new(vec![
-            TableCell::new_with_alignment("manager".blue().bold(), 2, Alignment::Center),
-        ]));
+        table.add_row(Row::new(vec![TableCell::new_with_alignment(
+            "manager".blue().bold(),
+            2,
+            Alignment::Center,
+        )]));
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("task".blue().bold(), 1, tag_align),
             TableCell::new_with_alignment("schedule".yellow().bold(), 1, content_align),

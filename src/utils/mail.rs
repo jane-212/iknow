@@ -37,12 +37,24 @@ impl Mail {
     pub fn send(&self, subject: impl AsRef<str>, body: impl Into<String>) -> Result<()> {
         let subject = subject.as_ref();
         let email = Message::builder()
-            .from(self.from.parse().with_context(|| format!("parse mailbox `{}` failed", self.from))?)
-            .reply_to(self.reply_to.parse().with_context(|| format!("parse mailbox `{}` failed", self.reply_to))?)
-            .to(self.to.parse().with_context(|| format!("parse mailbox `{}` failed", self.to))?)
+            .from(
+                self.from
+                    .parse()
+                    .with_context(|| format!("parse mailbox `{}` failed", self.from))?,
+            )
+            .reply_to(
+                self.reply_to
+                    .parse()
+                    .with_context(|| format!("parse mailbox `{}` failed", self.reply_to))?,
+            )
+            .to(self
+                .to
+                .parse()
+                .with_context(|| format!("parse mailbox `{}` failed", self.to))?)
             .subject(subject)
             .header(ContentType::TEXT_HTML)
-            .body(body.into()).with_context(|| format!("init email `{}` failed", subject))?;
+            .body(body.into())
+            .with_context(|| format!("init email `{}` failed", subject))?;
 
         self.client.send(&email).context("send mail failed")?;
 
