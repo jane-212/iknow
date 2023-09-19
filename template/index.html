@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="never">
     <title>{% block title %}{% endblock title %}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fore: '#32302f',
+                        fored: '#f2e5bc',
+                        back: '#ebdbb2',
+                        backd: '#3c3836',
+                        main: '#d79921',
+                        maind: '#fabd2f',
+                    }
+                }
+            }
         }
-
-        :root {
-            --bg-color: #3c3836;
-            --fg-color: #f2e5bc;
-            --main-color: #fabd2f;
-        }
-
-        body {
-            background-image: url(https://pic.imgdb.cn/item/64f169d2661c6c8e544231e8.png);
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            width: 100%;
-        }
-    </style>
-    {% block style %}
-    {% endblock style %}
+    </script>
 </head>
 
-<body>
+<body class="bg-back dark:bg-backd">
     {% block body %}
     {% endblock body %}
 </body>

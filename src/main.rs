@@ -71,6 +71,12 @@ async fn entry() -> Result<()> {
     .await
     .context("run app failed")?;
 
+    listen_stop().await.context("listen stop failed")?;
+
+    Ok(())
+}
+
+async fn listen_stop() -> Result<()> {
     let mut sigint = signal(SignalKind::interrupt()).context("create signal interrupt failed")?;
     let mut sigterm = signal(SignalKind::terminate()).context("create signal terminate failed")?;
     tokio::select! {
@@ -144,7 +150,7 @@ async fn run(
         .context("add cron job failed")?;
     #[cfg(not(debug_assertions))]
     let manager = Manager::new()
-        .add("0 0 17 * * *", "csgo", Box::new(csgo))
+        .add("0 0 12 * * *", "csgo", Box::new(csgo))
         .context("add cron job failed")?;
     tokio::spawn(async move {
         manager.start().await;
