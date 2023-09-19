@@ -5,26 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="never">
     <title>{% block title %}{% endblock title %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        fore: '#32302f',
-                        fored: '#f2e5bc',
-                        back: '#ebdbb2',
-                        backd: '#3c3836',
-                        main: '#d79921',
-                        maind: '#fabd2f',
-                    }
-                }
-            }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
         }
-    </script>
+
+        .text-fore {
+            color: #f2e5bc;
+        }
+
+        .bg-back {
+            background-color: #3c3836;
+        }
+
+        .text-main {
+            color: #fabd2f;
+        }
+    </style>
+    {% block style %}
+    {% endblock style %}
 </head>
 
-<body class="bg-back dark:bg-backd">
+<body class="bg-back">
     {% block body %}
     {% endblock body %}
 </body>

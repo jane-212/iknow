@@ -2,32 +2,133 @@
 
 {% block title %}csgo matches near 3 days{% endblock title %}
 
-{% block body %}
-<div class="lg:w-3/5 md:w-3/5 sm:w-full mx-auto p-4">
-    {% for match in matches %}
-    <div class="w-full border-b-2 border-main">
-        <div class="flex justify-between">
-            <div class="w-1/2">
-                <div class="mx-auto text-center">
-                    <img class="h-12 mx-auto" src="{{match.team1.logo}}" alt="{{match.team1.name}}">
-                    <span class="w-12 h-4 text-main dark:text-maind font-bold">{{match.team1.name}}</span>
-                </div>
-            </div>
-            <div class="w-1/2">
-                <div class="mx-auto text-center">
-                    <img class="h-12 mx-auto" src="{{match.team2.logo}}" alt="{{match.team2.name}}">
-                    <span class="w-12 h-4 text-main dark:text-maind font-bold">{{match.team2.name}}</span>
-                </div>
-            </div>
-        </div>
+{% block style %}
+<style>
+    .w-auto {
+        @media (min-width: 640px) {
+            width: 90%;
+        }
 
-        <div class="text-center mt-4 mb-4">
-            <div class="text-center">
-                <p class="text-fore dark:text-fored text-lg font-bold">{{match.info.name}}</p>
-                <p class="text-fore dark:text-fored text-sm font-semibold">{{match.info.start_time |
-                    date(format="%Y-%m-%d %H:%M",
-                    timezone="Asia/Shanghai")}}</p>
-                <p class="text-fore dark:text-fored font-bold">{{match.info.bo | upper}}</p>
+        @media (min-width: 768px) {
+            width: 60%;
+        }
+
+        @media (min-width: 1024px) {
+            width: 60%;
+        }
+    }
+
+    .mx-auto {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .p-4 {
+        padding: 1rem;
+    }
+
+    .pb-12 {
+        padding-bottom: 3rem;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .w-1-3 {
+        width: 33.333333%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .h-12 {
+        height: 3rem;
+    }
+
+    .w-12 {
+        width: 3rem;
+    }
+
+    .h-4 {
+        height: 1rem;
+    }
+
+    .font-bold {
+        font-weight: 700;
+    }
+
+    .font-semibold {
+        font-weight: 600;
+    }
+
+    .mt-12 {
+        margin-top: 3rem;
+    }
+
+    .mb-12 {
+        margin-bottom: 3rem;
+    }
+
+    .mt-4 {
+        margin-top: 1rem;
+    }
+
+    .mb-4 {
+        margin-bottom: 1rem;
+    }
+
+    .text-lg {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+
+    .text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+    
+    .border-b {
+        border-bottom: 2px solid #fabd2f;
+    }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="w-auto mx-auto p-4">
+    {% for match in matches %}
+    <div class="w-full mt-12 mb-12 pb-12 border-b">
+        <div class="flex justify-between">
+            <div class="w-1-3">
+                <div class="mx-auto text-center">
+                    <img class="h-12 mx-auto mb-4" src="{{match.team1.logo}}" alt="{{match.team1.name}}">
+                    <span class="w-12 h-4 text-main font-bold">{{match.team1.name}}</span>
+                </div>
+            </div>
+            <div class="w-1-3">
+                <div class="text-center">
+                    <p class="text-fore text-lg font-bold">{{match.info.name}}</p>
+                    <p class="text-fore text-sm font-semibold mt-4">{{match.info.start_time |
+                        date(format="%Y-%m-%d %H:%M",
+                        timezone="Asia/Shanghai")}}</p>
+                    <p class="text-fore font-bold mt-4">{{match.info.bo | upper}}</p>
+                </div>
+            </div>
+            <div class="w-1-3">
+                <div class="mx-auto text-center">
+                    <img class="h-12 mx-auto mb-4" src="{{match.team2.logo}}" alt="{{match.team2.name}}">
+                    <span class="w-12 h-4 text-main font-bold">{{match.team2.name}}</span>
+                </div>
             </div>
         </div>
     </div>
