@@ -1,9 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use chrono::{NaiveDate, NaiveTime};
-use reqwest::{
-    header::{self, HeaderMap, HeaderValue},
-    Client,
-};
+use reqwest::header::{self, HeaderMap, HeaderValue};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]

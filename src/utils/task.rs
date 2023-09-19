@@ -5,11 +5,9 @@ use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use colored::Colorize;
 use cron::Schedule;
-use term_table::{
-    row::Row,
-    table_cell::{Alignment, TableCell},
-    Table, TableStyle,
-};
+use term_table::row::Row;
+use term_table::table_cell::{Alignment, TableCell};
+use term_table::{Table, TableStyle};
 use tokio::time::{self, Duration};
 
 const POLL_INTERVAL: u64 = 1;

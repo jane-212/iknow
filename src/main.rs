@@ -8,11 +8,9 @@ use dotenv::dotenv;
 use env_logger::Builder;
 use log::Level;
 use shadow_rs::shadow;
-use term_table::{
-    row::Row,
-    table_cell::{Alignment, TableCell},
-    Table, TableStyle,
-};
+use term_table::row::Row;
+use term_table::table_cell::{Alignment, TableCell};
+use term_table::{Table, TableStyle};
 use tokio::signal::unix::{signal, SignalKind};
 
 use iknow::csgo::Csgo;

@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
-use lettre::{
-    message::header::ContentType, transport::smtp::authentication::Credentials, Message,
-    SmtpTransport, Transport,
-};
+use lettre::message::header::ContentType;
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::Message;
+use lettre::{SmtpTransport, Transport};
 
 #[derive(Clone)]
 pub struct Mail {
