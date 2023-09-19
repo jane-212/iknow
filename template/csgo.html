@@ -6,7 +6,7 @@
 <style>
     .w-auto {
         @media (min-width: 640px) {
-            width: 90%;
+            width: 80%;
         }
 
         @media (min-width: 768px) {
@@ -99,7 +99,7 @@
     }
     
     .border-b {
-        border-bottom: 2px solid #fabd2f;
+        border-bottom: 2px solid #f4f1de;
     }
 </style>
 {% endblock style %}
@@ -112,22 +112,22 @@
             <div class="w-1-3">
                 <div class="mx-auto text-center">
                     <img class="h-12 mx-auto mb-4" src="{{match.team1.logo}}" alt="{{match.team1.name}}">
-                    <span class="w-12 h-4 text-main font-bold">{{match.team1.name}}</span>
+                    <span class="w-12 h-4 text-blue font-bold">{{match.team1.name}}</span>
                 </div>
             </div>
             <div class="w-1-3">
                 <div class="text-center">
-                    <p class="text-fore text-lg font-bold">{{match.info.name}}</p>
-                    <p class="text-fore text-sm font-semibold mt-4">{{match.info.start_time |
+                    <p class="text-white text-lg font-bold">{{match.info.name}}</p>
+                    <p class="text-white text-sm font-semibold mt-4">{{match.info.start_time |
                         date(format="%Y-%m-%d %H:%M",
                         timezone="Asia/Shanghai")}}</p>
-                    <p class="text-fore font-bold mt-4">{{match.info.bo | upper}}</p>
+                    <p class="text-white font-bold mt-4">{{match.info.bo | upper}}</p>
                 </div>
             </div>
             <div class="w-1-3">
                 <div class="mx-auto text-center">
                     <img class="h-12 mx-auto mb-4" src="{{match.team2.logo}}" alt="{{match.team2.name}}">
-                    <span class="w-12 h-4 text-main font-bold">{{match.team2.name}}</span>
+                    <span class="w-12 h-4 text-pink font-bold">{{match.team2.name}}</span>
                 </div>
             </div>
         </div>
