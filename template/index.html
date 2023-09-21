@@ -12,28 +12,169 @@
         }
 
         .body-back {
-            background-color: #333333;
+            background-image: url('https://storage.googleapis.com/sentryio-assets/img/email/sentry-subtle-randogeo-pattern-transparent.png');
+            background-color: #f0eef3;
         }
 
-        .text-white {
-            color: #f4f1de;
+        .text-black {
+            color: #000000;
         }
 
-        .text-pink {
-            color: #ffafcc;
+        .text-red {
+            color: #ee2746;
         }
 
         .text-blue {
-            color: #a2d2ff;
+            color: #2177b8;
+        }
+
+        .bg-white {
+            background-color: #fff;
+        }
+
+        .bg-blue {
+            background-color: #93d5dc;
+        }
+
+        .w-auto {
+            width: 768px;
+
+            @media (max-width: 768px) {
+                width: 90%;
+            }
+        }
+
+        .h-min {
+            min-height: 100vh;
+        }
+
+        .mx-auto {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .pt-4 {
+            padding-top: 1rem;
+        }
+
+        .pb-4 {
+            padding-bottom: 1rem;
+        }
+
+        .pb-12 {
+            padding-bottom: 3rem;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .w-1-3 {
+            width: 33.333333%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .h-12 {
+            height: 3rem;
+        }
+
+        .w-12 {
+            width: 3rem;
+        }
+
+        .h-4 {
+            height: 1rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-family-style {
+            font-family: Chancery,cursive,LiSu,sans-serif;
+        }
+
+        .mt-12 {
+            margin-top: 3rem;
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 2.0rem;
+        }
+
+        .text-2xl {
+            font-size: 1.375rem;
+            line-height: 2.25rem;
+        }
+
+        .text-3xl {
+            font-size: 1.5rem;
+            line-height: 2.5rem;
+        }
+
+        .text-4xl {
+            font-size: 1.625rem;
+            line-height: 2.75rem;
+        }
+
+        .text-logo {
+            font-size: 2.0rem;
+            line-height: 2.0rem;
         }
     </style>
-    {% block style %}
-    {% endblock style %}
 </head>
 
-<body class="body-back">
-    {% block body %}
-    {% endblock body %}
+<body class="body-back h-min">
+    <div class="w-auto mx-auto bg-white mt-12">
+        <div class="bg-blue w-full text-center font-bold pt-4 pb-4 text-logo text-black font-family-style">
+            <p>iKnow</p>
+        </div>
+        {% block body %}
+        {% endblock body %}
+    </div>
 </body>
 
 </html>
