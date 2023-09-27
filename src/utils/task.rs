@@ -4,7 +4,7 @@ use anyhow::{Context, Result};
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use colored::Colorize;
-use cron::Schedule;
+use cron::{OwnedScheduleIterator, Schedule};
 use term_table::row::Row;
 use term_table::table_cell::{Alignment, TableCell};
 use term_table::{Table, TableStyle};
@@ -20,7 +20,7 @@ pub trait Task: Send + Sync {
 
 struct Cron<'a> {
     task: Box<dyn Task + 'a>,
-    schedule: Schedule,
+    schedule: OwnedScheduleIterator<Local>,
     upcomings: Vec<DateTime<Local>>,
     task_name: String,
     schedule_description: String,
@@ -33,7 +33,13 @@ impl<'a> Cron<'a> {
         task_name: impl Into<String>,
         schedule_description: impl Into<String>,
     ) -> Cron<'a> {
-        let upcomings = schedule.upcoming(Local).take(POLL_MAX_SIZE).collect();
+        let mut schedule = schedule.upcoming_owned(Local);
+        let mut upcomings = Vec::new();
+        while upcomings.len() < POLL_MAX_SIZE {
+            if let Some(upcoming) = schedule.next() {
+                upcomings.push(upcoming);
+            }
+        }
         let task_name = task_name.into();
         let schedule_description = schedule_description.into();
         Self {
@@ -111,7 +117,7 @@ impl<'a> Manager<'a> {
                 };
                 if upcoming < &now {
                     cron.upcomings.remove(0);
-                    if let Some(upcoming) = cron.schedule.upcoming(Local).next() {
+                    if let Some(upcoming) = cron.schedule.next() {
                         cron.upcomings.push(upcoming);
                     }
                     if let Err(e) = cron.task.run().await {
